@@ -22,19 +22,12 @@ public class DebugClient {
             userIn = new BufferedReader(new InputStreamReader(System.in));
             
             while(true) {
-                System.out.println("press key to run");
-                userIn.readLine();
+                System.out.println("Select Testcase (choose from 1 - 3)");
+                String input = userIn.readLine();
 
-                sendReadFile();
-                sendReadFile();
-                sendReadFile();
-                sendReadFile();
-                sendReadFile();
-                sendWriteFile();
-                sendWriteFile();
-                sendWriteFile();
-                sendWriteFile();
-                sendWriteFile();
+                if (input.equals("1")) testcase1();
+                if (input.equals("2")) testcase2();
+                if (input.equals("3")) testcase3();
             }
         } catch (IOException e) {
         } finally {
@@ -45,15 +38,85 @@ public class DebugClient {
         }
     }
 
-    private void sendReadFile() throws IOException {
+    /**
+     * Dieser Testfall demonstriert die Schreiber-
+     * priorität bei aufeinander folgenden
+     * Anfragen zur selben Datei. Außerdem ist
+     * erkennbar, dass Schreibzugriffe sequenziell
+     * ausgeführt werden, während Lesezugriffe parallel
+     * erlaubt sind.
+     */
+    private void testcase1() throws IOException {
+        sendWriteFile1();
+        sendReadFile1();
+        sendReadFile1();
+        sendReadFile1();
+        sendReadFile1();
+        sendReadFile1();
+        sendWriteFile1();
+        sendWriteFile1();
+        sendWriteFile1();
+        sendWriteFile1();
+        sendWriteFile1();
+    }
+
+    /**
+     * Dieser Testfall demonstriert das parallele
+     * Lesen auf verschiedene Dateien.
+     */
+    private void testcase2() throws IOException {
+        sendWriteFile1();
+        sendReadFile1();
+        sendReadFile1();
+        sendReadFile1();
+        sendWriteFile2();
+        sendWriteFile2();
+        sendReadFile2();        
+    }
+    
+    /**
+     * Dieser Testfall demonstriert das Einreihen von
+     * Aufträgen in die Warteschlange, falls mehr
+     * Anfragen eingehen, als Worker vorhanden sind.
+     */
+    private void testcase3() throws IOException {
+        for (int i = 0; i < 40; i++)
+            sendReadFile1();
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        for (int i = 0; i < 40; i++)
+            sendReadFile1();
+    }
+
+    private void sendReadFile1() throws IOException {
         DatagramPacket p = createRequestPacket("READ file1.txt,1");
         socket.send(p);
         try {
             Thread.sleep(100);
         } catch (Exception e) {}
     }
-    private void sendWriteFile() throws IOException {
+    private void sendReadFile2() throws IOException {
+        DatagramPacket p = createRequestPacket("READ file2.txt,1");
+        socket.send(p);
+        try {
+            Thread.sleep(100);
+        } catch (Exception e) {}
+    }
+    private void sendWriteFile1() throws IOException {
         DatagramPacket p = createRequestPacket("WRITE file1.txt,1,Test");
+        socket.send(p);
+        try {
+            Thread.sleep(100);
+        } catch (Exception e) {}
+    }
+    private void sendWriteFile2() throws IOException {
+        DatagramPacket p = createRequestPacket("WRITE file2.txt,1,Test");
         socket.send(p);
         try {
             Thread.sleep(100);
