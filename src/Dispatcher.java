@@ -5,7 +5,7 @@ import java.net.SocketException;
 
 public class Dispatcher {
 
-    private static final String FILEPATH = "./Files";
+    private static final String FILEPATH = System.getProperty("user.home") + "/Desktop/Files/";
 
     private int port;
     private DatagramSocket serverSocket = null;
