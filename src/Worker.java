@@ -30,7 +30,7 @@ public class Worker implements Runnable {
         }
     }
     
-    public DatagramPacket handleIncomingRequest(DatagramPacket requestPacket) {
+    private DatagramPacket handleIncomingRequest(DatagramPacket requestPacket) {
 
         byte[] data = requestPacket.getData();
         int length = requestPacket.getLength();
