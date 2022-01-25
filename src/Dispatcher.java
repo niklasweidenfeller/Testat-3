@@ -9,10 +9,12 @@ public class Dispatcher {
 
     private int port;
     private DatagramSocket serverSocket = null;
+    private Worker[] workers;
     private DatagramQueue requestQueue;
 
     public Dispatcher(int port, int workerCount) {
         this.port = port;
+        workers = new Worker[workerCount];
         requestQueue = new DatagramQueue();
     }
 
@@ -20,6 +22,10 @@ public class Dispatcher {
         try {
             serverSocket = new DatagramSocket(port);
             System.out.println("Dispatcher running on port " + port);
+            for (Worker worker : workers) {
+                worker = new Worker(serverSocket, requestQueue);
+                new Thread(worker).start();
+            }
 
             while (true) {
                 try {
