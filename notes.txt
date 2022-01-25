@@ -1,0 +1,16 @@
+2 oder 3 worker
+später vllt größere Anzahl
+
+Einbauen: Synchronisationskonzept
+-> Schreiberprio mit Monitorkonzept
+	Tipp: Monitor in extra Klasse
+
+Testen
+
+Testclient, evtl so, dass Test zwei Requests schickt und dann wartet
+
+paralleles Schreiben auf untersch. Dateien sollte funktionieren.
+
+-> Wartschlage/Puffer -> Worker holen sich aus Puffer
+
+immer wenn datei angesprochen wird --> neuen Monitor anlegen, falls noch nicht vorhanden
