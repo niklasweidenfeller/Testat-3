@@ -23,9 +23,12 @@ public class Dispatcher {
     public void start() {
         try {
             serverSocket = new DatagramSocket(port);
-            System.out.println("Dispatcher running on port " + port);
+            System.out.println("Dispatcher: running on port " + port);
+            // Zählvariable dient nur zur Vereinfachung der Konsolenausgabe.
+            int i = 1;
             for (Worker worker : workers) {
-                worker = new Worker(serverSocket, requestQueue, fileHandler);
+                worker = new Worker(serverSocket, requestQueue, fileHandler, i);
+                i++;
                 new Thread(worker).start();
             }
 

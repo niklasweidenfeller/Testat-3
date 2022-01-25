@@ -11,22 +11,31 @@ public class Worker implements Runnable {
     private DatagramSocket serverSocket;
     private DatagramQueue requestQueue;
     private FileHandler fileHandler;
+    private String workerNameAndIndent = "";
 
-    public Worker(DatagramSocket serverSocket, DatagramQueue requestQueue, FileHandler fileHandler) {
+    public Worker(DatagramSocket serverSocket, DatagramQueue requestQueue, FileHandler fileHandler, int id) {
         this.serverSocket = serverSocket;
         this.requestQueue = requestQueue;
         this.fileHandler = fileHandler;
+
+        // nur zur Veranschaulichung der Konsolenausgabe
+        for (int i = 0; i < id; i++) {
+            workerNameAndIndent += "\t\t";
+        }
+        workerNameAndIndent += ("Worker " + id);
     }
 
     @Override
     public void run() {
         while(true) {
-            System.out.println("Worker awaiting request");
-            DatagramPacket requestPacket = requestQueue.remove();
+            System.out.println(workerNameAndIndent + ": awaiting request");
+            DatagramPacket requestPacket = requestQueue.remove(workerNameAndIndent);
+            System.out.println(workerNameAndIndent + ": handling request");
             DatagramPacket response = handleIncomingRequest(requestPacket);
             try {
                 serverSocket.send(response);
             } catch (IOException e) {}
+            System.out.println(workerNameAndIndent + ": finished request");
         }
     }
     
@@ -35,8 +44,10 @@ public class Worker implements Runnable {
         byte[] data = requestPacket.getData();
         int length = requestPacket.getLength();
         String request = new String(data, 0, length);
+        System.out.println(workerNameAndIndent + ": Client request: <"+request+">");
 
         String responseString = parseRequest(request);
+        System.out.println(workerNameAndIndent + ": Sending response: " + responseString);
         byte[] responseBytes = responseString.getBytes();
         DatagramPacket responsePacket = new DatagramPacket(
             responseBytes, responseBytes.length, requestPacket.getAddress(), requestPacket.getPort()
@@ -79,9 +90,9 @@ public class Worker implements Runnable {
         }
 
         if (command == Command.READ) {
-            return fileHandler.read(filename, line_no);
+            return fileHandler.read(filename, line_no, workerNameAndIndent);
         } else {
-            return fileHandler.write(filename, line_no, data);
+            return fileHandler.write(filename, line_no, data, workerNameAndIndent);
         }
     }
 }

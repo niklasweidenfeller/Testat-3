@@ -28,12 +28,12 @@ public class FileHandler {
         }
     }
 
-    public String read(String filename, int line) {
+    public String read(String filename, int line, String workerNameAndIndent) {
         FileMonitor monitor = fileMonitors.get(filename);
         if (monitor == null) return "FILE NOT FOUND";
 
         monitor.startRead();
-        System.out.println("Liest");
+        System.out.println(workerNameAndIndent + ": Reading");
         try {
             Thread.sleep(5000);
         } catch (Exception e) {}
@@ -51,17 +51,18 @@ public class FileHandler {
             returnValue = "ERROR";
         }
 
+        System.out.println(workerNameAndIndent + ": Ending read");
         monitor.endRead();
 
         return returnValue;
     }
 
-    public String write(String filename, int line, String data) {
+    public String write(String filename, int line, String data, String workerNameAndIndent) {
         FileMonitor monitor = fileMonitors.get(filename);
         if (monitor == null) return "FILE NOT FOUND";
 
         monitor.startWrite();
-        System.out.println("schreibt");
+        System.out.println(workerNameAndIndent + ": Writing");
         try {
             Thread.sleep(5000);
         } catch (Exception e) {}
@@ -81,6 +82,7 @@ public class FileHandler {
             returnValue = "ERROR";
         }
 
+        System.out.println(workerNameAndIndent + ": Ending write");
         monitor.endWrite();
 
         return returnValue;
