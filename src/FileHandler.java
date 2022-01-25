@@ -10,26 +10,31 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class FileHandler {
-    // TODO: Schreiberprio!
     private class FileMonitor {
-        int readerCount = 0;
+        boolean activeReader = false;
         boolean activeWriter = false;
+        int readCount = 0;
+        int waitingWriters = 0;
 
         public synchronized void startRead() {
             try {
-                readerCount++;
-                while (activeWriter) wait();
-                notify();                
+                while (activeWriter || waitingWriters>0) wait();
+                readCount++;
+                if (readCount == 1) activeReader = true;
+                notifyAll();
             } catch (InterruptedException e) {}
         }
         public synchronized void endRead() {
-            readerCount--;
-            if (readerCount==0) notifyAll();            
+            readCount--;
+            if (readCount == 0) activeReader = false;
+            notifyAll();
         }
         public synchronized void startWrite() {
             try {
-                while (readerCount > 0 || activeWriter) wait();
+                waitingWriters++;
+                while (activeReader || activeWriter) wait();
                 activeWriter = true;
+                waitingWriters--;
             } catch (InterruptedException e) {}
         }
         public synchronized void endWrite() {
