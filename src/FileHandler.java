@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class FileHandler {
-    private class FileHandle {
+    // TODO: Schreiberprio!
+    private class FileMonitor {
         int readerCount = 0;
         boolean activeWriter = false;
 
@@ -37,11 +38,11 @@ public class FileHandler {
         }
     }
 
-    private Map<String, FileHandle> fileHandles;
+    private Map<String, FileMonitor> fileMonitors;
     private Map<String, File> files;
 
     public FileHandler(String filePath) {
-        fileHandles = new HashMap<>();
+        fileMonitors = new HashMap<>();
         files = new HashMap<>();
 
         File directory = new File(filePath);
@@ -49,16 +50,16 @@ public class FileHandler {
             File[] listFiles = directory.listFiles();
             for (File file : listFiles) {
                 files.put(file.getName(), file);
-                fileHandles.put(file.getName(), new FileHandle());
+                fileMonitors.put(file.getName(), new FileMonitor());
             }
         }
     }
 
     public String read(String filename, int line) {
-        FileHandle handle = fileHandles.get(filename);
-        if (handle == null) return "FILE NOT FOUND";
+        FileMonitor monitor = fileMonitors.get(filename);
+        if (monitor == null) return "FILE NOT FOUND";
 
-        handle.startRead();
+        monitor.startRead();
 
         ArrayList<String> lines = null;
         String returnValue = null;
@@ -73,16 +74,16 @@ public class FileHandler {
             returnValue = "ERROR";
         }
 
-        handle.endRead();
+        monitor.endRead();
 
         return returnValue;
     }
 
     public String write(String filename, int line, String data) {
-        FileHandle handle = fileHandles.get(filename);
-        if (handle == null) return "FILE NOT FOUND";
+        FileMonitor monitor = fileMonitors.get(filename);
+        if (monitor == null) return "FILE NOT FOUND";
 
-        handle.startWrite();
+        monitor.startWrite();
 
         ArrayList<String> lines = null;
         String returnValue = null;
@@ -99,7 +100,7 @@ public class FileHandler {
             returnValue = "ERROR";
         }
 
-        handle.endWrite();
+        monitor.endWrite();
 
         return returnValue;
     }
@@ -120,7 +121,7 @@ public class FileHandler {
                 lines.add(newLine);
             }
         } catch (IOException e) {
-            throw e;
+            throw e; // Der Aufrufer behandelt die Ausnahme.
         } finally {
             try {
                 if (fileReader != null) fileReader.close();
