@@ -51,11 +51,6 @@ public class DebugClient {
         sendReadFile1();
         sendReadFile1();
         sendReadFile1();
-        sendReadFile1();
-        sendReadFile1();
-        sendWriteFile1();
-        sendWriteFile1();
-        sendWriteFile1();
         sendWriteFile1();
         sendWriteFile1();
     }
@@ -80,17 +75,7 @@ public class DebugClient {
      * Anfragen eingehen, als Worker vorhanden sind.
      */
     private void testcase3() throws IOException {
-        for (int i = 0; i < 40; i++)
-            sendReadFile1();
-
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        for (int i = 0; i < 40; i++)
+        for (int i = 0; i < 10; i++)
             sendReadFile1();
     }
 
