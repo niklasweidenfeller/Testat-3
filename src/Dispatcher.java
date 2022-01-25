@@ -3,6 +3,12 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+/**
+ * Diese Klasse dient als Einstiegspunkt in den Server.
+ * Dabei werden Aufträge entgegengenommen und in eine FIFO-
+ * Warteschlange eingereiht. Von dort übernehmen die
+ * Worker-Threads die Bearbeitung der Aufträge.
+ */
 public class Dispatcher {
 
     private static final String FILEPATH = System.getProperty("user.home") + "/Desktop/Files/";
@@ -11,8 +17,17 @@ public class Dispatcher {
     private DatagramSocket serverSocket = null;
     private Worker[] workers;
     private DatagramQueue requestQueue;
+    /**
+     * Die FileHandler-Klasse stellt Methoden zum Bearbeiten
+     * und Zugreifen auf Dateien des Filesystems bereit.
+     */
     private FileHandler fileHandler;
 
+    /**
+     * Konstruktor
+     * @param port  Der Port, auf dem der FileServer laufen soll.
+     * @param workerCount   Die Anzahl der Worker-Threads.
+     */
     public Dispatcher(int port, int workerCount) {
         this.port = port;
         workers = new Worker[workerCount];
@@ -20,6 +35,10 @@ public class Dispatcher {
         fileHandler = new FileHandler(FILEPATH);
     }
 
+    /**
+     * Die Hauptroutine des Dispatchers wartet auf neue Aufträge
+     * und reiht diese in eine Warteschlange ein.
+     */
     public void start() {
         try {
             serverSocket = new DatagramSocket(port);
@@ -32,6 +51,7 @@ public class Dispatcher {
                 new Thread(worker).start();
             }
 
+            // Entgegennehmen und Einreihen der Aufträge
             while (true) {
                 try {
                     DatagramPacket incomingPacket = createEmptyDatagramPacket();
@@ -46,11 +66,20 @@ public class Dispatcher {
         }
     }
 
+    /**
+     * Diese Methode erstellt ein leeres DatagramPacket,
+     * welches zum Entgegennehmen von Anfragen verwendet wird.
+     * 
+     * @return Das leere DatagramPacket.
+     */
     private DatagramPacket createEmptyDatagramPacket() {
         byte[] bytes = new byte[65535];
         return new DatagramPacket(bytes, bytes.length);
     }
 
+    /**
+     * Die main-Methode zur Ausführung des Servers.
+     */
     public static void main(String[] args) {
         new Dispatcher(5999, 5).start();
     }

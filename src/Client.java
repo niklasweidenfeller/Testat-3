@@ -6,6 +6,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Diese Klasse dient zur dialogbasierten Kommunikation mit dem Server.
+ */
 public class Client {
 
     DatagramSocket socket = null;
@@ -16,6 +19,11 @@ public class Client {
         this.serverPort = serverPort;
     }
 
+    /**
+     * Die run()-Methode wartet auf eine Nutzereingabe, welche dann als Request
+     * an den Server gesendet wird. Im Anschluss wird auf eine Antwort des
+     * Servers gewartet und diese Ausgegeben.
+     */
     public void run() {
         try {
             socket = new DatagramSocket();
@@ -41,6 +49,14 @@ public class Client {
         }
     }
 
+    /**
+     * Diese Methode generiert ein DatagramPacket, welches
+     * den per Konsoleneingabe eigegebenen String als
+     * Nutzdaten enthält.
+     *
+     * @param input Der im Datagram zu verpackende String.
+     * @return      Das zum Versenden bereite DatagramPacket. 
+     */
     private DatagramPacket createRequestPacket(String input) {
         byte[] bytes = input.getBytes();
         InetAddress serverAddress = null;
@@ -54,6 +70,13 @@ public class Client {
         return p;
     }
 
+    /**
+     * Diese Methode erstellt ein leeres DatagramPacket und
+     * wartet im Anschluss darauf, dass das Packet mit
+     * empfangenen Nutzdaten befüllt wird.
+     * 
+     * @return   Die empfangenden Nutzdaten
+     */
     private String waitForAnswer() {
         byte[] buffer = new byte[65535];
         DatagramPacket receivedPacket = new DatagramPacket(buffer, buffer.length);

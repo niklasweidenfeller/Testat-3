@@ -6,6 +6,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Diese Klasse dient zur Ausführung einiger vordefinierter
+ * Testfälle. Die Antworten des Servers werden hierbei nicht beachtet.
+ */
 public class DebugClient {
 
     DatagramSocket socket = null;
@@ -16,6 +20,10 @@ public class DebugClient {
         this.serverPort = serverPort;
     }
 
+    /**
+     * Die run()-Methode führt ja nach Nutzereingabe
+     * einen von 3 vordefinierten Testfällen aus.
+     */
     public void run() {
         try {
             socket = new DatagramSocket();
@@ -79,6 +87,7 @@ public class DebugClient {
             sendReadFile1();
     }
 
+    // Lesen aus Datei 1
     private void sendReadFile1() throws IOException {
         DatagramPacket p = createRequestPacket("READ file1.txt,1");
         socket.send(p);
@@ -86,6 +95,8 @@ public class DebugClient {
             Thread.sleep(100);
         } catch (Exception e) {}
     }
+
+    // Lesen aus Datei 2
     private void sendReadFile2() throws IOException {
         DatagramPacket p = createRequestPacket("READ file2.txt,1");
         socket.send(p);
@@ -93,6 +104,8 @@ public class DebugClient {
             Thread.sleep(100);
         } catch (Exception e) {}
     }
+
+    // In Datei 1 schreiben
     private void sendWriteFile1() throws IOException {
         DatagramPacket p = createRequestPacket("WRITE file1.txt,1,Test");
         socket.send(p);
@@ -100,6 +113,8 @@ public class DebugClient {
             Thread.sleep(100);
         } catch (Exception e) {}
     }
+
+    // In Datei 2 schreiben
     private void sendWriteFile2() throws IOException {
         DatagramPacket p = createRequestPacket("WRITE file2.txt,1,Test");
         socket.send(p);
@@ -108,6 +123,14 @@ public class DebugClient {
         } catch (Exception e) {}
     }
 
+    /**
+     * Diese Methode generiert ein DatagramPacket, welches
+     * den per Konsoleneingabe eigegebenen String als
+     * Nutzdaten enthält.
+     *
+     * @param input Der im Datagram zu verpackende String.
+     * @return      Das zum Versenden bereite DatagramPacket. 
+     */
     private DatagramPacket createRequestPacket(String request) {
         byte[] bytes = request.getBytes();
         InetAddress serverAddress = null;

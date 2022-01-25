@@ -14,8 +14,19 @@ import java.util.LinkedList;
  * gewährleistet. 
  */
 public class DatagramQueue {
+    /**
+     * Die Warteschlange, in welche eingehende Requests eingereiht
+     * werden.
+     */
     private LinkedList<DatagramPacket> queue = new LinkedList<>();
 
+    /**
+     * Diese Methode fügt ein DatagramPacket am Ende der
+     * Warteschlange ein. Dies geschieht unter gegenseitigem
+     * Ausschluss.
+     * 
+     * @param packet    Das einzufügende DatagramPacket.
+     */
     public synchronized void append(DatagramPacket packet) {
         queue.add(packet);
         System.out.println("Dispatcher: added Element to Queue. Size: " + queue.size());
@@ -23,6 +34,14 @@ public class DatagramQueue {
         notify();
     }
 
+    /**
+     * Diese Methode entnimmt das erste DatagramPacket der
+     * Warteschlange ein. Dies geschieht unter gegenseitigem
+     * Ausschluss.
+     * 
+      * @param workerNameAndIndent  Nur zu Debugginzwecken. 
+      * @return Das aus der Warteschlange entnommene DatagramPacket.
+      */
     public synchronized DatagramPacket remove(String workerNameAndIndent) {
         try {
             // Warten, wenn die Warteschlange leer ist.
