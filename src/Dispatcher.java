@@ -11,11 +11,13 @@ public class Dispatcher {
     private DatagramSocket serverSocket = null;
     private Worker[] workers;
     private DatagramQueue requestQueue;
+    private FileHandler fileHandler;
 
     public Dispatcher(int port, int workerCount) {
         this.port = port;
         workers = new Worker[workerCount];
         requestQueue = new DatagramQueue();
+        fileHandler = new FileHandler(FILEPATH);
     }
 
     public void start() {
@@ -23,7 +25,7 @@ public class Dispatcher {
             serverSocket = new DatagramSocket(port);
             System.out.println("Dispatcher running on port " + port);
             for (Worker worker : workers) {
-                worker = new Worker(serverSocket, requestQueue);
+                worker = new Worker(serverSocket, requestQueue, fileHandler);
                 new Thread(worker).start();
             }
 

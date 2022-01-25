@@ -6,10 +6,12 @@ public class Worker implements Runnable {
 
     private DatagramSocket serverSocket;
     private DatagramQueue requestQueue;
+    private FileHandler fileHandler;
 
-    public Worker(DatagramSocket serverSocket, DatagramQueue requestQueue) {
+    public Worker(DatagramSocket serverSocket, DatagramQueue requestQueue, FileHandler fileHandler) {
         this.serverSocket = serverSocket;
         this.requestQueue = requestQueue;
+        this.fileHandler = fileHandler;
     }
 
     @Override
