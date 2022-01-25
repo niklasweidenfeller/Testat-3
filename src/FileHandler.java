@@ -65,6 +65,10 @@ public class FileHandler {
         if (monitor == null) return "FILE NOT FOUND";
 
         monitor.startRead();
+        System.out.println("Liest");
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {}
 
         ArrayList<String> lines = null;
         String returnValue = null;
@@ -89,6 +93,10 @@ public class FileHandler {
         if (monitor == null) return "FILE NOT FOUND";
 
         monitor.startWrite();
+        System.out.println("schreibt");
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {}
 
         ArrayList<String> lines = null;
         String returnValue = null;

@@ -17,8 +17,8 @@ public class DatagramQueue {
     private LinkedList<DatagramPacket> queue = new LinkedList<>();
 
     public synchronized void append(DatagramPacket packet) {
-        System.out.println("Adding Element to Queue");
         queue.add(packet);
+        System.out.println("Added Element to Queue. Size: " + queue.size());
         // Den ersten wartenden Thread aufwecken. 
         notify();
     }
@@ -29,7 +29,7 @@ public class DatagramQueue {
             while (queue.size() == 0) wait();
         } catch (InterruptedException e) {}
 
-        System.out.println("Removing Element from Queue");
+        System.out.println("Removing Element from Queue. New size: " + (queue.size()-1));
         return queue.pop();
     }
 }
