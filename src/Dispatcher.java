@@ -8,6 +8,8 @@ import java.net.SocketException;
  * Dabei werden Aufträge entgegengenommen und in eine FIFO-
  * Warteschlange eingereiht. Von dort übernehmen die
  * Worker-Threads die Bearbeitung der Aufträge.
+ * 
+ * Es wird ein "Files" Verzeichnis auf dem Desktop erwartet.
  */
 public class Dispatcher {
 
@@ -17,16 +19,16 @@ public class Dispatcher {
     private DatagramSocket serverSocket = null;
     private Worker[] workers;
     private DatagramQueue requestQueue;
-    /**
-     * Die FileHandler-Klasse stellt Methoden zum Bearbeiten
-     * und Zugreifen auf Dateien des Filesystems bereit.
-     */
+
+    /* FileHandler-Klasse zum Bearbeiten und Zugreifen
+     * auf Dateien des Filesystems. */
     private FileHandler fileHandler;
 
     /**
      * Konstruktor
-     * @param port  Der Port, auf dem der FileServer laufen soll.
-     * @param workerCount   Die Anzahl der Worker-Threads.
+     * 
+     * @param port Der Port, auf dem der FileServer laufen soll.
+     * @param workerCount Die Anzahl der Worker-Threads.
      */
     public Dispatcher(int port, int workerCount) {
         this.port = port;

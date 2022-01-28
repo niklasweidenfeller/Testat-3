@@ -21,8 +21,8 @@ public class DebugClient {
     }
 
     /**
-     * Die run()-Methode führt ja nach Nutzereingabe
-     * einen von 3 vordefinierten Testfällen aus.
+     * Die run()-Methode führt je nach Nutzereingabe
+     * einen von drei vordefinierten Testfällen aus.
      */
     public void run() {
         try {
@@ -48,11 +48,10 @@ public class DebugClient {
 
     /**
      * Dieser Testfall demonstriert die Schreiber-
-     * priorität bei aufeinander folgenden
-     * Anfragen zur selben Datei. Außerdem ist
-     * erkennbar, dass Schreibzugriffe sequenziell
-     * ausgeführt werden, während Lesezugriffe parallel
-     * erlaubt sind.
+     * priorität bei aufeinanderfolgenden Anfragen
+     * nach der selben Datei. Außerdem ist erkennbar,
+     * dass Schreibzugriffe sequenziell ausgeführt werden,
+     * während Lesezugriffe parallel erlaubt sind.
      */
     private void testcase1() throws IOException {
         sendWriteFile1();
@@ -65,7 +64,7 @@ public class DebugClient {
 
     /**
      * Dieser Testfall demonstriert das parallele
-     * Lesen auf verschiedene Dateien.
+     * Schreiben auf verschiedene Dateien.
      */
     private void testcase2() throws IOException {
         sendWriteFile1();

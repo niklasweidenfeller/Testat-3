@@ -3,12 +3,12 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 /**
- * Ein Worker-Thread nimmt wartet an der Auftragswarteschlange
+ * Ein Worker-Thread wartet an der Auftragswarteschlange
  * requestQueue auf neue Aufträge. Sobald ein Auftrag vorhanden
- * ist, wird dieser Auftrag entnommen und abgearbeitet.
+ * ist, wird dieser entnommen und abgearbeitet.
  * 
- * Nach der Bearbeitung wird das gewünschte Ergebnis/eine Fehler-
- * meldung an den Absender der Anfrage versendet.
+ * Nach der Bearbeitung wird das gewünschte Ergebnis bzw. eine
+ * Fehlermeldung an den Absender der Anfrage versendet.
  */
 public class Worker implements Runnable {
     private enum Command {
@@ -26,7 +26,7 @@ public class Worker implements Runnable {
         this.requestQueue = requestQueue;
         this.fileHandler = fileHandler;
 
-        // nur zur Veranschaulichung der Konsolenausgabe
+        // Dient nur der Konsolenausgabe.
         for (int i = 0; i < id; i++) {
             workerNameAndIndent += "\t\t";
         }
@@ -35,9 +35,9 @@ public class Worker implements Runnable {
 
     /**
      * Die Hauptroutine der Worker bestehend aus:
-     *  Entnahme einer Anfrage aus der Auftragswarteschlange
-     *  Verarbeitung des Auftrags
-     *  Versenden der Antwort
+     * - Entnahme einer Anfrage aus der Auftragswarteschlange
+     * - Verarbeitung des Auftrags
+     * - Versenden der Antwort
      */
     @Override
     public void run() {
@@ -52,10 +52,10 @@ public class Worker implements Runnable {
             System.out.println(workerNameAndIndent + ": finished request");
         }
     }
-    
+
     /**
-     * Verarbeiten eines eingehenden DatagramPacket und Zusammenstellen
-     * der entsprechenden Antwort.
+     * Verarbeiten eines eingehenden DatagramPacket und
+     * Zusammenstellen der entsprechenden Antwort.
      * 
      * @param requestPacket Der eingehende Auftrag. 
      * @return              Die zu verschickende Antwort.
@@ -81,11 +81,11 @@ public class Worker implements Runnable {
 
     /**
      * Diese Methode nimmt die Nutzdaten einer eingehenden Anfrage entgegen,
-     * teilt diese in Kommando, Dateiname, Zeilennummer und optional neuen
-     * Zeileninhalt auf und ruft anschließend den FileHandler auf, welcher
+     * teilt diese in Kommando, Dateiname, Zeilennummer und (je nach Kommando)
+     * neuen Zeileninhalt auf und ruft anschließend den FileHandler, welcher
      * das Lesen/Schreiben aus einer Datei übernimmt.
      * 
-     * @param request   Die eingehenden Nutzdaten
+     * @param request   Die eingehenden Nutzdaten.
      * @return          Die Nutzdaten der zu versendenden Antwort.
      */
     private String parseRequest(String request) {
@@ -95,7 +95,7 @@ public class Worker implements Runnable {
         else if (request.startsWith("WRITE")) command = Command.WRITE;
         else return "BAD REQUEST: Only READ or WRITE allowed.";
 
-        // Kommando vom Rest der Nachricht trennen
+        // Kommando vom Rest der Nachricht trennen.
         String[] commandAndRest = request.split(" ", 2);
         if (commandAndRest.length != 2)
             return "BAD REQUEST: Invalid parameters.";
@@ -115,7 +115,7 @@ public class Worker implements Runnable {
             data = split[2];
         }
 
-        // Umwandlung der Zeilennummer von String zu Integer
+        // Umwandlung der Zeilennummer von String zu int
         int line_no = 0;
         try {
             line_no = Integer.parseInt(line);

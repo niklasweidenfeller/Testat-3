@@ -50,12 +50,11 @@ public class Client {
     }
 
     /**
-     * Diese Methode generiert ein DatagramPacket, welches
-     * den per Konsoleneingabe eigegebenen String als
-     * Nutzdaten enthält.
+     * Diese Methode verpackt einen bereitgestellten
+     * String in einem DatagramPacket.
      *
      * @param input Der im Datagram zu verpackende String.
-     * @return      Das zum Versenden bereite DatagramPacket. 
+     * @return      Das DatagramPacket.
      */
     private DatagramPacket createRequestPacket(String input) {
         byte[] bytes = input.getBytes();
@@ -75,7 +74,7 @@ public class Client {
      * wartet im Anschluss darauf, dass das Packet mit
      * empfangenen Nutzdaten befüllt wird.
      * 
-     * @return   Die empfangenden Nutzdaten
+     * @return   Die empfangenden Nutzdaten.
      */
     private String waitForAnswer() {
         byte[] buffer = new byte[65535];

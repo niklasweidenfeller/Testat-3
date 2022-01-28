@@ -2,7 +2,7 @@
 
 ## Allgemeines
 
-1.  Das Programm erwartet einen Ordner `Files` auf dem Desktop. Die verarbeiteten Dateien sollten vor der Nutzung angelegt werden.
+1.  Das Programm erwartet einen Ordner `Files` auf dem Desktop. Die angefragten Dateien sollten vor der Nutzung angelegt werden.
 
 1. Starten des Servers:
 
@@ -22,7 +22,7 @@
     java DebugClient
     ```
 
-    Der DebugClient zeigt keine Antworten des Servers. Diese Anfragen dienen lediglich der Demonstration der serverseitigen Synchronisation und Prioritäten. Die eigentliche "Funktionalität" der Anwendung wird über Testfälle des dialogbasierten Clients demonstriert. Und daher bei den automatisierten Testfällen nach erfolgreicher Synchronisation der Anfragen als gegeben angenommen.
+    Der DebugClient zeigt keine Antworten des Servers. Diese Anfragen dienen lediglich der Demonstration der serverseitigen Synchronisation und Prioritäten. Die eigentliche "Funktionalität" der Anwendung wird über Testfälle des dialogbasierten Clients demonstriert. Deshalb werden sie bei den automatisierten Testfällen nach erfolgreicher Synchronisation der Anfragen als gegeben angenommen.
 
 ## Testfällt mit diaglogbasiertem Client
 
@@ -102,7 +102,7 @@ Server response:
 BAD REQUEST: Command WRITE takes 3 arguments.
 ======================
 ```
-READ und WRITE über das Zeilenende hinaus:
+READ und WRITE über das Dateiende hinaus:
 ```
 ======================
 Please enter a Request
@@ -285,7 +285,7 @@ Dispatcher: added Element to Queue. Size: 1
                                         Worker 5: handling request
                                         Worker 5: Client request: <WRITE file1.txt,1,Test>
 ```
-- Der sechste Request wird in die Warteschlange eingefügt. Da alle Worker blockiert sind, wird der Request von keinem Worker entgegengenommen.. Da Worker 1 schreibt, kann Worker 5 noch nicht mit dem Schreiben beginnen.
+- Der sechste Request wird in die Warteschlange eingefügt. Da alle Worker blockiert sind, wird der Request von keinem Worker entgegengenommen. Da Worker 1 schreibt, kann Worker 5 noch nicht mit dem Schreiben beginnen.
 ```
 Dispatcher: added Element to Queue. Size: 1
 ```
@@ -367,7 +367,7 @@ Dispatcher: running on port 5999
                                 Worker 4: awaiting request
                                         Worker 5: awaiting request
 ```
-- eingehender WRITE-Request für Datei 1. Worker 2 nimmt den Auftrag und erhält die Monitorkontrolle für Datei 1.
+- Eingehender WRITE-Request für Datei 1. Worker 2 nimmt den Auftrag und erhält die Monitorkontrolle für Datei 1.
 ```
 Dispatcher: added Element to Queue. Size: 1
                 Worker 2: Removing Element from Queue. New size: 0
@@ -375,28 +375,28 @@ Dispatcher: added Element to Queue. Size: 1
                 Worker 2: Client request: <WRITE file1.txt,1,Test>
                 Worker 2: Writing
 ```
-- eingehender Leseauftrag für Datei 1. Worker 1 nimmt den Auftrag, muss aber aber auf Worker 2 warten.
+- Eingehender Leseauftrag für Datei 1. Worker 1 nimmt den Auftrag, muss aber aber auf Worker 2 warten.
 ```
 Dispatcher: added Element to Queue. Size: 1
         Worker 1: Removing Element from Queue. New size: 0
         Worker 1: handling request
         Worker 1: Client request: <READ file1.txt,1>
 ```
-- eingehender Leseauftrag für Datei 1. Worker 3 nimmt den Auftrag, muss aber aber auf Worker 2 warten.
+- Eingehender Leseauftrag für Datei 1. Worker 3 nimmt den Auftrag, muss aber aber auf Worker 2 warten.
 ```
 Dispatcher: added Element to Queue. Size: 1
                         Worker 3: Removing Element from Queue. New size: 0
                         Worker 3: handling request
                         Worker 3: Client request: <READ file1.txt,1>
 ```
-- eingehender Leseauftrag für Datei 1. Worker 4 nimmt den Auftrag, muss aber aber auf Worker 2 warten.
+- Eingehender Leseauftrag für Datei 1. Worker 4 nimmt den Auftrag, muss aber aber auf Worker 2 warten.
 ```
 Dispatcher: added Element to Queue. Size: 1
                                 Worker 4: Removing Element from Queue. New size: 0
                                 Worker 4: handling request
                                 Worker 4: Client request: <READ file1.txt,1>
 ```
-- eingehender Schreibauftrag für Datei 2. Da Datei 1 und Datei 2 parallel beschrieben werden können, kann der zugewiesene Worker 5 direkt mit dem Schreiben beginnen.
+- Eingehender Schreibauftrag für Datei 2. Da Datei 1 und Datei 2 parallel beschrieben werden können, kann der zugewiesene Worker 5 direkt mit dem Schreiben beginnen.
 ```
 Dispatcher: added Element to Queue. Size: 1
                                         Worker 5: Removing Element from Queue. New size: 0
@@ -404,7 +404,7 @@ Dispatcher: added Element to Queue. Size: 1
                                         Worker 5: Client request: <WRITE file2.txt,1,Test>
                                         Worker 5: Writing
 ```
-- zwei weitere Aufträge gehen ein, können aber nicht bearbeitet werden, da keiner der Worker frei ist. Die Queue hat eine Länge von 2.
+- Zwei weitere Aufträge gehen ein, können aber nicht bearbeitet werden, da keiner der Worker frei ist. Die Queue hat eine Länge von 2.
 ```
 Dispatcher: added Element to Queue. Size: 1
 Dispatcher: added Element to Queue. Size: 2
@@ -428,7 +428,7 @@ Dispatcher: added Element to Queue. Size: 2
                                         Worker 5: Sending response: OK
                 Worker 2: Writing
 ```
-- Worker 5 versendet die Antwort der Schreibvorgangs auf Datei 2.
+- Worker 5 versendet die Antwort des Schreibvorgangs auf Datei 2.
 ```
                                         Worker 5: finished request
                                         Worker 5: awaiting request
@@ -484,7 +484,7 @@ Dispatcher: running on port 5999
                                 Worker 4: awaiting request
                                         Worker 5: awaiting request
 ```
-- Die ersten 5 eingehende Aufträge können direkt von den Workern verarbeitet werden. Da es sich lediglich um Leseaufträge handelt, ist parallelverarbeitung möglich.
+- Die ersten fünf eingehende Aufträge können direkt von den Workern verarbeitet werden. Da es sich lediglich um Leseaufträge handelt, ist parallele Verarbeitung möglich.
 ```
 Dispatcher: added Element to Queue. Size: 1
         Worker 1: Removing Element from Queue. New size: 0
@@ -520,7 +520,7 @@ Dispatcher: added Element to Queue. Size: 3
 Dispatcher: added Element to Queue. Size: 4
 Dispatcher: added Element to Queue. Size: 5
 ```
-- Die Worker beenden nacheinander ihre Lesevorgänge. Nach dem versenden der Antwort warten sie wieder an der Queue, können jedoch sofort weiterlaufen, da die Queue noch Aufträge enthält.
+- Die Worker beenden nacheinander ihre Lesevorgänge. Nach dem Versenden der Antwort warten sie wieder an der Queue, können jedoch sofort weiterlaufen, da die Queue noch Aufträge enthält.
 ```
         Worker 1: Ending read
         Worker 1: Sending response: Test
@@ -563,7 +563,7 @@ Dispatcher: added Element to Queue. Size: 5
                                         Worker 5: Client request: <READ file1.txt,1>
                                         Worker 5: Reading
 ```
-- Alle 5 Worker bearbeiten einen zweiten Auftrag. Im Folgenden beenden die Worker diesen zweiten Auftrag und warten wieder an der Queue. Nun ist diese jedoch leer, sowass die Worker im Wartezustand bleiben.
+- Alle 5 Worker bearbeiten einen zweiten Auftrag. Im Folgenden beenden die Worker diesen zweiten Auftrag und warten wieder an der Queue. Nun ist diese jedoch leer, sodass die Worker im Wartezustand bleiben.
 ```
         Worker 1: Ending read
         Worker 1: Sending response: Test

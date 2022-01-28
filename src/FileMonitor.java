@@ -1,11 +1,10 @@
 /**
- * Diese Klasse implementiert das zweite Leser-Schreiber-
- * Problem mit Schreiberpriorität. Zur Lösung wird das
- * Konzept des Zugangsmonitors verwendet.
+ * Diese Klasse implementiert das zweite Leser-Schreiber-Problem
+ * mit Schreiberpriorität. Zur Lösung wird das Konzept des
+ * Zugangsmonitors verwendet.
  * 
- * Für die kritischen Abschnitte "Lesen" und "Schreiben"
- * steht je ein Eintritts- und ein Austrittsprotokoll
- * zur Verfügung.  
+ * Für die kritischen Abschnitte "Lesen" und "Schreiben" steht je
+ * ein Eintritts- und ein Austrittsprotokoll zur Verfügung.  
  */
 public class FileMonitor {
     private boolean activeWriter = false;
@@ -13,7 +12,7 @@ public class FileMonitor {
     private int writeCount = 0;
 
     /**
-     * Eintrittsprotkoll Lesen
+     * Eintrittsprotkoll "Lesen"
      */
     public synchronized void startRead() {
         try {
@@ -24,7 +23,7 @@ public class FileMonitor {
     }
 
     /**
-     * Austrittsprotokoll Lesen
+     * Austrittsprotokoll "Lesen"
      */
     public synchronized void endRead() {
         readCount--;
@@ -32,18 +31,18 @@ public class FileMonitor {
     }
 
     /**
-     * Eintrittsprotkoll Schreiben
+     * Eintrittsprotkoll "Schreiben"
      */
     public synchronized void startWrite() {
         try {
-            writeCount++; // "Anmelden zum Schreiben"
+            writeCount++;
             while (readCount>0 || activeWriter) wait();
             activeWriter = true;
         } catch (InterruptedException e) {}
     }
 
     /**
-     * Austrittsprotokoll Schreiben
+     * Austrittsprotokoll "Schreiben"
      */
     public synchronized void endWrite() {
         writeCount--;
