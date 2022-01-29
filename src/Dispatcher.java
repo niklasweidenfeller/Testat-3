@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.concurrent.*;
 
 /**
  * Diese Klasse dient als Einstiegspunkt in den Server.
@@ -18,7 +19,11 @@ public class Dispatcher {
     private int port;
     private DatagramSocket serverSocket = null;
     private Worker[] workers;
-    private DatagramQueue requestQueue;
+    private boolean[] workerFree;
+    private Semaphore[] workerSem;
+    private Semaphore freeWorkers;
+    private Semaphore mutex = new Semaphore(1, true);
+    private DatagramPacket[] tasks;
 
     /* FileHandler-Klasse zum Bearbeiten und Zugreifen
      * auf Dateien des Filesystems. */
@@ -33,8 +38,15 @@ public class Dispatcher {
     public Dispatcher(int port, int workerCount) {
         this.port = port;
         workers = new Worker[workerCount];
-        requestQueue = new DatagramQueue();
         fileHandler = new FileHandler(FILEPATH);
+        workerFree = new boolean[workerCount];
+        workerSem = new Semaphore[workerCount];
+        for (int i = 0; i < workerCount; i++) {
+            workerFree[i] = true;
+            workerSem[i] = new Semaphore(0, true);
+        }
+        freeWorkers = new Semaphore(5, true);
+        tasks = new DatagramPacket[workerCount];
     }
 
     /**
@@ -46,9 +58,9 @@ public class Dispatcher {
             serverSocket = new DatagramSocket(port);
             System.out.println("Dispatcher: running on port " + port);
             // Zählvariable dient nur zur Vereinfachung der Konsolenausgabe.
-            int i = 1;
+            int i = 0;
             for (Worker worker : workers) {
-                worker = new Worker(serverSocket, requestQueue, fileHandler, i);
+                worker = new Worker(serverSocket, fileHandler, i, this);
                 i++;
                 new Thread(worker).start();
             }
@@ -58,7 +70,7 @@ public class Dispatcher {
                 try {
                     DatagramPacket incomingPacket = createEmptyDatagramPacket();
                     serverSocket.receive(incomingPacket);
-                    requestQueue.append(incomingPacket);
+                    assignToWorker(incomingPacket);
                 } catch (IOException ignored) {}
             }
         } catch (SocketException e) {
@@ -66,6 +78,44 @@ public class Dispatcher {
         } finally {
             if (serverSocket != null) serverSocket.close();
         }
+    }
+
+    private void assignToWorker(DatagramPacket dp) {
+        try {
+            freeWorkers.acquire();
+
+            mutex.acquire();
+            int worker = -1;
+            for (int i = 0; i < workerFree.length; i++) {
+                if (workerFree[i]) {
+                    worker = i;
+                    break;
+                }
+            }
+
+            workerFree[worker] = false;
+            mutex.release();
+            tasks[worker] = dp;
+            workerSem[worker].release();
+
+        } catch (Exception e) {}
+    }
+
+    public void setWorkerFree(int id) {
+        try {
+            workerSem[id].acquire();
+            workerFree[id] = true;
+
+            freeWorkers.release();
+        } catch (Exception e) {}
+    }
+
+    public Semaphore getWorkerSem(int i) {
+        return workerSem[i];
+    }
+
+    public DatagramPacket getTask(int i) {
+        return tasks[i];
     }
 
     /**

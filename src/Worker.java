@@ -17,14 +17,16 @@ public class Worker implements Runnable {
     }
 
     private DatagramSocket serverSocket;
-    private DatagramQueue requestQueue;
     private FileHandler fileHandler;
     private String workerNameAndIndent = "";
+    private Dispatcher dispatcher;
+    private int id;
 
-    public Worker(DatagramSocket serverSocket, DatagramQueue requestQueue, FileHandler fileHandler, int id) {
+    public Worker(DatagramSocket serverSocket, FileHandler fileHandler, int id, Dispatcher dispatcher) {
+        this.dispatcher = dispatcher;
         this.serverSocket = serverSocket;
-        this.requestQueue = requestQueue;
         this.fileHandler = fileHandler;
+        this.id = id;
 
         // Dient nur der Konsolenausgabe.
         for (int i = 0; i < id; i++) {
@@ -42,14 +44,24 @@ public class Worker implements Runnable {
     @Override
     public void run() {
         while(true) {
-            System.out.println(workerNameAndIndent + ": awaiting request");
-            DatagramPacket requestPacket = requestQueue.remove(workerNameAndIndent);
-            System.out.println(workerNameAndIndent + ": handling request");
-            DatagramPacket response = handleIncomingRequest(requestPacket);
             try {
-                serverSocket.send(response);
-            } catch (IOException e) {}
-            System.out.println(workerNameAndIndent + ": finished request");
+                System.out.println(workerNameAndIndent + ": awaiting request");
+
+                dispatcher.getWorkerSem(id).acquire();
+
+                DatagramPacket requestPacket = dispatcher.getTask(id);
+
+                System.out.println(workerNameAndIndent + ": handling request");
+                DatagramPacket response = handleIncomingRequest(requestPacket);
+                try {
+                    serverSocket.send(response);
+                } catch (IOException e) {}
+                System.out.println(workerNameAndIndent + ": finished request");
+
+                dispatcher.getWorkerSem(id).release();
+                dispatcher.setWorkerFree(id);
+
+            } catch (Exception e) {}
         }
     }
 
